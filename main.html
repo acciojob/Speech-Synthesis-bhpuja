@@ -2,42 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Speech Synthesis</title>
-  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text to Speech</title>
 </head>
 <body>
 
-    <div class="voiceinator">
+  <h2>Text to Speech Application</h2>
 
-      <h1>The Voiceinator 5000</h1>
+  <!-- Input Section -->
+  <textarea id="text-input" rows="10" cols="50" placeholder="Enter text here"></textarea>
+  <br><br>
 
-      <select name="voice" id="voices">
-        <option value="">Select A Voice</option>
-      </select>
+  <!-- Voice Dropdown -->
+  <select id="voice-select"></select>
+  <br><br>
 
-      <label for="rate">Rate:</label>
-      <input name="rate" type="range" min="0" max="3" value="1" step="0.1">
+  <!-- Rate Control -->
+  <label for="rate">Rate:</label>
+  <input type="range" id="rate" min="0.1" max="2" value="1" step="0.1">
+  <span id="rate-value">1</span>
+  <br><br>
 
-      <label for="pitch">Pitch:</label>
+  <!-- Pitch Control -->
+  <label for="pitch">Pitch:</label>
+  <input type="range" id="pitch" min="0" max="2" value="1" step="0.1">
+  <span id="pitch-value">1</span>
+  <br><br>
 
-      <input name="pitch" type="range" min="0" max="2" step="0.1">
-      <textarea name="text">Hello! I love JavaScript 👍</textarea>
-      <button id="stop">Stop!</button>
-      <button id="speak">Speak</button>
+  <!-- Start and Stop Buttons -->
+  <button id="start-btn">Start</button>
+  <button id="stop-btn">Stop</button>
 
-    </div>
+  <script>
+    // Get necessary DOM elements
+    const textInput = document.getElementById("text-input");
+    const voiceSelect = document.getElementById("voice-select");
+    const rateInput = document.getElementById("rate");
+    const pitchInput = document.getElementById("pitch");
+    const rateValue = document.getElementById("rate-value");
+    const pitchValue = document.getElementById("pitch-value");
+    const startButton = document.getElementById("start-btn");
+    const stopButton = document.getElementById("stop-btn");
 
-<script>
-  const msg = new SpeechSynthesisUtterance();
-  let voices = [];
-  const voicesDropdown = document.querySelector('[name="voice"]');
-  const options = document.querySelectorAll('[type="range"], [name="text"]');
-  const speakButton = document.querySelector('#speak');
-  const stopButton = document.querySelector('#stop');
+    let synth = window.speechSynthesis;
+    let voices = [];
+    let currentSpeech = null;
 
-  //Your code goes here
-</script>
+    // Function to populate voice options
+    function populateVoices() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = "";
+      voices.forEach(voice => {
+        const option = document.createElement('option');
+        option.textContent = voice.name;
+        option.value = voice.name;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Initial population of voices
+    populateVoices();
+    if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = populateVoices;
+    }
+
+    // Update rate and pitch values on input change
+    rateInput.addEventListener("input", () => {
+      rateValue.textContent = rateInput.value;
+    });
+
+    pitchInput.addEventListener("input", () => {
+      pitchValue.textContent = pitchInput.value;
+    });
+
+    // Function to start speaking
+    function startSpeaking() {
+      if (textInput.value !== "") {
+        const speech = new SpeechSynthesisUtterance(textInput.value);
+        const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
+        speech.voice = selectedVoice;
+        speech.rate = rateInput.value;
+        speech.pitch = pitchInput.value;
+
+        synth.speak(speech);
+        currentSpeech = speech;
+      }
+    }
+
+    // Function to stop speaking
+    function stopSpeaking() {
+      if (currentSpeech) {
+        synth.cancel();
+      }
+    }
+
+    // Event listeners for Start and Stop buttons
+    startButton.addEventListener("click", startSpeaking);
+    stopButton.addEventListener("click", stopSpeaking);
+  </script>
 
 </body>
 </html>
