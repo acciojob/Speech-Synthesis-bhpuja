@@ -4,61 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speech Synthesis</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f9f9f9;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        textarea {
-            width: 80%;
-            height: 100px;
-            margin-bottom: 20px;
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        select, input[type="range"], button {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Text to Speech Application</h1>
@@ -78,51 +24,8 @@
         <button id="start-btn">Start</button>
         <button id="stop-btn" disabled>Stop</button>
     </div>
-
-    <script>
-        // Voice synthesis setup
-        const textBox = document.getElementById('text-box');
-        const voiceSelect = document.getElementById('voice-select');
-        const rateInput = document.getElementById('rate');
-        const pitchInput = document.getElementById('pitch');
-        const startButton = document.getElementById('start-btn');
-        const stopButton = document.getElementById('stop-btn');
-
-        let voices = [];
-        let speech = new SpeechSynthesisUtterance();
-
-        // Populate voices in the dropdown
-        function populateVoices() {
-            voices = speechSynthesis.getVoices();
-            voiceSelect.innerHTML = voices
-                .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
-                .join('');
-        }
-        populateVoices();
-        speechSynthesis.addEventListener('voiceschanged', populateVoices);
-
-        // Start speaking
-        startButton.addEventListener('click', () => {
-            if (speechSynthesis.speaking) return;
-            speech.text = textBox.value;
-            speech.voice = voices.find(voice => voice.name === voiceSelect.value);
-            speech.rate = rateInput.value;
-            speech.pitch = pitchInput.value;
-            speechSynthesis.speak(speech);
-            stopButton.disabled = false;
-        });
-
-        // Stop speaking
-        stopButton.addEventListener('click', () => {
-            speechSynthesis.cancel();
-            stopButton.disabled = true;
-        });
-
-        // Disable stop button when speech ends
-        speech.addEventListener('end', () => {
-            stopButton.disabled = true;
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
 
